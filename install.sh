@@ -3,7 +3,7 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
-g_ver=`0.11.4`
+g_ver="0.11.4"
 
 if [ -f /etc/motd ];then
     echo "welcome to mdserver-web panel" > /etc/motd
