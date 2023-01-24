@@ -3,6 +3,7 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
+g_ver=`0.11.4`
 
 if [ -f /etc/motd ];then
     echo "welcome to mdserver-web panel" > /etc/motd
@@ -76,15 +77,15 @@ if [ $OSNAME != "macos" ];then
 
 		cn=$(curl -fsSL -m 10 http://ipinfo.io/json | grep "\"country\": \"CN\"")
 		if [ ! -z "$cn" ];then
-			curl -sSLo /tmp/master.zip https://raw.githubusercontent.com/Dark11296/mdserver-web-backup-/master/mdserver-web-0.11.0.zip
+			curl -sSLo /tmp/master.zip https://github.com/midoks/mdserver-web/archive/refs/tags/$g_ver.zip
 		else
-			curl -sSLo /tmp/master.zip https://raw.githubusercontent.com/Dark11296/mdserver-web-backup-/master/mdserver-web-0.11.0.zip
+			curl -sSLo /tmp/master.zip https://github.com/midoks/mdserver-web/archive/refs/tags/$g_ver.zip
 		fi
 
 		cd /tmp && unzip /tmp/master.zip
-		mv -f /tmp/mdserver-web-master /www/server/mdserver-web
+		mv -f /tmp/mdserver-web-$g_ver /www/server/mdserver-web
 		rm -rf /tmp/master.zip
-		rm -rf /tmp/mdserver-web-master
+		rm -rf /tmp/mdserver-web-$g_ver
 	fi
 fi
 
