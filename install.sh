@@ -25,24 +25,16 @@ function input_ver(){
 	yellow " ————————————————————————————————————————————————————"
 	echo
 	read -p "请输入版本号：" MenuInput
-	
 	if [ "$MenuInput" = "" ]; then
-		g_ver="0.11.4"
+	    g_ver="0.11.4"
 	else
-		g_ver="${MenuInput}"
+	    g_ver="${MenuInput}"
 	fi
 }
 
 input_ver "first"
-
 is64bit=`getconf LONG_BIT`
-
-if [ -f /etc/motd ];then
-    echo "welcome to mdserver-web panel" > /etc/motd
-fi
-
 startTime=`date +%s`
-
 _os=`uname`
 echo "use system: ${_os}"
 
