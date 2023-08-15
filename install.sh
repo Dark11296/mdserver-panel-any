@@ -69,7 +69,7 @@ elif grep -Eqi "Debian" /etc/issue || grep -Eq "Debian" /etc/*-release; then
 	OSNAME='debian'
 	apt update -y
 	apt install -y devscripts
-	apt install -y wget curl zip unzip tar cron
+	apt install -y wget zip unzip
 elif grep -Eqi "Ubuntu" /etc/issue || grep -Eq "Ubuntu" /etc/*-release; then
 	OSNAME='ubuntu'
 	apt install -y wget zip unzip
