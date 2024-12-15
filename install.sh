@@ -3,6 +3,13 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 # LANG=en_US.UTF-8
 
+if [ -f /www/server/mdserver-web/tools.py ];then
+	echo -e "存在旧版代码,不能安装!,已知风险的情况下" 
+	echo -e "rm -rf /www/server/mdserver-web"
+	echo -e "可安装!" 
+	exit 0
+fi
+
 red(){
     echo -e "\033[31m\033[01m$1\033[0m"
 }
@@ -96,7 +103,7 @@ if [ $OSNAME != "macos" ];then
 	    echo ""
 	else
 	    groupadd www
-		useradd -g www -s /bin/bash www
+		useradd -g www -s /usr/sbin/nologin www
 	fi
 
 	mkdir -p /www/server
