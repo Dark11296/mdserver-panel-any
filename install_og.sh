@@ -11,6 +11,10 @@ if [ -f /www/server/mdserver-web/tools.py ];then
 	exit 0
 fi
 
+LOG_FILE=/var/log/mw-install.log
+
+{
+
 startTime=`date +%s`
 
 _os=`uname`
@@ -168,3 +172,8 @@ fi
 endTime=`date +%s`
 ((outTime=(${endTime}-${startTime})/60))
 echo -e "Time consumed:\033[32m $outTime \033[0mMinute!"
+
+} 1> >(tee $LOG_FILE) 2>&1
+
+echo -e "\nInstall completed. If error occurs, please contact us with the log file mw-install.log ."
+echo "安装完毕，如果出现错误，请带上同目录下的安装日志 mw-install.log 联系我们反馈."
