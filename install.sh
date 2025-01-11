@@ -33,7 +33,7 @@ purple(){
 
 function input_ver(){
 	clear
-	purple " 请输入mdserver-web 版本号。留空则使用默认版本号0.11.4！"
+	purple " 请输入mdserver-web 版本号。留空则默认用最新版，最低可安装版本号0.11.4！"
 	yellow " ————————————————————————————————————————————————————"
 	echo
 	read -p "请输入版本号：" MenuInput
@@ -130,7 +130,12 @@ if [ $OSNAME != "macos" ];then
 	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
 	if [ ! -d /www/server/mdserver-web ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
-			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip
+  			if [ "$g_ver" == "master" ];then
+                        	link="github.com/midoks/mdserver-web/archive/refs/heads/master.zip"
+			else
+   				link="github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip"
+       			fi
+			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}${link}
 			cd /tmp && unzip /tmp/master.zip
 			mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
 			rm -rf /tmp/master.zip
