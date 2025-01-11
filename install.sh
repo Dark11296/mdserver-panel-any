@@ -38,7 +38,7 @@ function input_ver(){
 	echo
 	read -p "请输入版本号：" MenuInput
 	if [ "$MenuInput" = "" ]; then
-	    g_ver="0.11.4"
+	    g_ver="master"
 	else
 	    g_ver="${MenuInput}"
 	fi
