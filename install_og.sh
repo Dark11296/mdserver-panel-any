@@ -11,6 +11,37 @@ if [ -f /www/server/mdserver-web/tools.py ];then
 	exit 0
 fi
 
+red(){
+    echo -e "\033[31m\033[01m$1\033[0m"
+}
+green(){
+    echo -e "\033[32m\033[01m$1\033[0m"
+}
+yellow(){
+    echo -e "\033[33m\033[01m$1\033[0m"
+}
+blue(){
+    echo -e "\033[34m\033[01m$1\033[0m"
+}
+purple(){
+    echo -e "\033[35m\033[01m$1\033[0m"
+}
+
+function input_ver(){
+	clear
+	purple " 请输入mdserver-web 版本号。留空则使用默认版本号0.11.4！"
+	yellow " ————————————————————————————————————————————————————"
+	echo
+	read -p "请输入版本号：" MenuInput
+	if [ "$MenuInput" = "" ]; then
+	    g_ver="0.11.4"
+	else
+	    g_ver="${MenuInput}"
+	fi
+}
+
+input_ver "first"
+
 LOG_FILE=/var/log/mw-install.log
 
 {
@@ -100,14 +131,14 @@ if [ $OSNAME != "macos" ];then
 	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
 	if [ ! -d /www/server/mdserver-web ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
-			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/master.zip
+			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip
 			cd /tmp && unzip /tmp/master.zip
-			mv -f /tmp/mdserver-web-master /www/server/mdserver-web
+			mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
 			rm -rf /tmp/master.zip
-			rm -rf /tmp/mdserver-web-master
+			rm -rf /tmp/mdserver-web-${g_ver}
 		else
 			# curl --insecure -sSLo /tmp/master.zip https://code.midoks.icu/midoks/mdserver-web/archive/master.zip
-			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.icu/midoks/mdserver-web/archive/master.zip
+			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/${g_ver}.zip
 			cd /tmp && unzip /tmp/master.zip
 			mv -f /tmp/mdserver-web /www/server/mdserver-web
 			rm -rf /tmp/master.zip
