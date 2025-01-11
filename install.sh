@@ -116,13 +116,19 @@ if [ $OSNAME != "macos" ];then
  	if [ ! -d /www/server/mdserver-web ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
 			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip
+                        cd /tmp && unzip /tmp/master.zip
+			mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
+                        rm -rf /tmp/master.zip
+			rm -rf /tmp/mdserver-web-${g_ver}
 		else
-			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/${g_ver}.zip
+			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.icu/midoks/mdserver-web/archive/${g_ver}.zip
+                        cd /tmp && unzip /tmp/master.zip
+			mv -f /tmp/mdserver-web /www/server/mdserver-web
+                        rm -rf /tmp/master.zip
+			rm -rf /tmp/mdserver-web
 		fi
-  		cd /tmp && unzip /tmp/master.zip
-		mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
-		rm -rf /tmp/master.zip
-		rm -rf /tmp/mdserver-web-${g_ver}	
+  		
+			
 	fi
  
 	# install acme.sh
