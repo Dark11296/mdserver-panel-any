@@ -1,7 +1,8 @@
 #!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:/opt/homebrew/bin
 export PATH
 # LANG=en_US.UTF-8
+is64bit=`getconf LONG_BIT`
 
 if [ -f /www/server/mdserver-web/tools.py ];then
 	echo -e "存在旧版代码,不能安装!,已知风险的情况下" 
@@ -9,6 +10,10 @@ if [ -f /www/server/mdserver-web/tools.py ];then
 	echo -e "可安装!" 
 	exit 0
 fi
+
+LOG_FILE=/var/log/mw-install.log
+
+{
 
 red(){
     echo -e "\033[31m\033[01m$1\033[0m"
@@ -40,15 +45,10 @@ function input_ver(){
 }
 
 input_ver "first"
-is64bit=`getconf LONG_BIT`
 startTime=`date +%s`
+
 _os=`uname`
 echo "use system: ${_os}"
-
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root!"
-  exit
-fi
 
 if [ ${_os} == "Darwin" ]; then
 	OSNAME='macos'
@@ -58,6 +58,7 @@ elif grep -Eqi "openSUSE" /etc/*-release; then
 	zypper install cron wget curl zip unzip
 elif grep -Eqi "FreeBSD" /etc/*-release; then
 	OSNAME='freebsd'
+	pkg install -y wget curl zip unzip unrar rar
 elif grep -Eqi "EulerOS" /etc/*-release || grep -Eqi "openEuler" /etc/*-release; then
 	OSNAME='euler'
 	yum install -y wget curl zip unzip tar crontabs
@@ -88,12 +89,26 @@ else
 	OSNAME='unknow'
 fi
 
+if [ "$EUID" -ne 0 ] && [ "$OSNAME" != "macos" ];then 
+	echo "Please run as root!"
+ 	exit
+fi
+
+
+# HTTP_PREFIX="https://"
+# LOCAL_ADDR=common
+# ping  -c 1 github.com > /dev/null 2>&1
+# if [ "$?" != "0" ];then
+# 	LOCAL_ADDR=cn
+# 	HTTP_PREFIX="https://mirror.ghproxy.com/"
+# fi
+
 HTTP_PREFIX="https://"
 LOCAL_ADDR=common
 cn=$(curl -fsSL -m 10 -s http://ipinfo.io/json | grep "\"country\": \"CN\"")
 if [ ! -z "$cn" ] || [ "$?" == "0" ] ;then
-    LOCAL_ADDR=cn
-    HTTP_PREFIX="https://ghproxy.com/"
+	LOCAL_ADDR=cn
+    HTTP_PREFIX="https://mirror.ghproxy.com/"
 fi
 
 echo "local:${LOCAL_ADDR}"
@@ -113,27 +128,28 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/site
 
 	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
- 	if [ ! -d /www/server/mdserver-web ];then
+	if [ ! -d /www/server/mdserver-web ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
 			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip
-                        cd /tmp && unzip /tmp/master.zip
+			cd /tmp && unzip /tmp/master.zip
 			mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
-                        rm -rf /tmp/master.zip
+			rm -rf /tmp/master.zip
 			rm -rf /tmp/mdserver-web-${g_ver}
 		else
+			# curl --insecure -sSLo /tmp/master.zip https://code.midoks.icu/midoks/mdserver-web/archive/master.zip
 			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.icu/midoks/mdserver-web/archive/${g_ver}.zip
-                        cd /tmp && unzip /tmp/master.zip
+			cd /tmp && unzip /tmp/master.zip
 			mv -f /tmp/mdserver-web /www/server/mdserver-web
-                        rm -rf /tmp/master.zip
+			rm -rf /tmp/master.zip
 			rm -rf /tmp/mdserver-web
 		fi
-  		
-			
+
+		
 	fi
- 
+
 	# install acme.sh
 	if [ ! -d /root/.acme.sh ];then
-	  if [ "$LOCAL_ADDR" != "common" ];then
+	    if [ "$LOCAL_ADDR" != "common" ];then
 	        curl --insecure -sSLo /tmp/acme.tar.gz https://gitee.com/neilpang/acme.sh/repository/archive/master.tar.gz
 	        tar xvzf /tmp/acme.tar.gz -C /tmp
 	        cd /tmp/acme.sh-master
@@ -147,9 +163,8 @@ if [ $OSNAME != "macos" ];then
 fi
 
 echo "use system version: ${OSNAME}"
-
 if [ "${OSNAME}" == "macos" ];then
-	curl --insecure -fsSL https://code.midoks.me/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
+	curl --insecure -fsSL https://code.midoks.icu/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
 else
 	cd /www/server/mdserver-web && bash scripts/install/${OSNAME}.sh
 fi
@@ -178,7 +193,6 @@ cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw start
 cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw default
 
 sleep 2
-
 if [ ! -e /usr/bin/mw ]; then
 	if [ -f /etc/rc.d/init.d/mw ];then
 		ln -s /etc/rc.d/init.d/mw /usr/bin/mw
@@ -186,6 +200,10 @@ if [ ! -e /usr/bin/mw ]; then
 fi
 
 endTime=`date +%s`
-
 ((outTime=(${endTime}-${startTime})/60))
 echo -e "Time consumed:\033[32m $outTime \033[0mMinute!"
+
+} 1> >(tee $LOG_FILE) 2>&1
+
+echo -e "\nInstall completed. If error occurs, please contact us with the log file mw-install.log ."
+echo "安装完毕，如果出现错误，请带上同目录下的安装日志 mw-install.log 联系我们反馈."
