@@ -92,7 +92,7 @@ HTTP_PREFIX="https://"
 LOCAL_ADDR=common
 cn=$(curl -fsSL -m 10 -s http://ipinfo.io/json | grep "\"country\": \"CN\"")
 if [ ! -z "$cn" ] || [ "$?" == "0" ] ;then
-	LOCAL_ADDR=cn
+    LOCAL_ADDR=cn
     HTTP_PREFIX="https://ghproxy.com/"
 fi
 
@@ -117,7 +117,7 @@ if [ $OSNAME != "macos" ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
 			curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/tags/${g_ver}.zip
 		else
-			curl --insecure -sSLo /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/${g_ver}.zip
+			wget --no-check-certificate -O /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/${g_ver}.zip
 		fi
   		cd /tmp && unzip /tmp/master.zip
 		mv -f /tmp/mdserver-web-${g_ver} /www/server/mdserver-web
