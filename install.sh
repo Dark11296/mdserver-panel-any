@@ -41,7 +41,7 @@ function input_ver(){
 }
 
 input_ver "first"
-
+apt-get install -y unzip
 # 获取操作系统架构
 arch=$(uname -m)
  
