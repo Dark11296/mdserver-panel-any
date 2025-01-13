@@ -41,6 +41,37 @@ function input_ver(){
 }
 
 input_ver "first"
+
+# 获取操作系统架构
+arch=$(uname -m)
+ 
+# 根据不同架构执行相应命令
+case $arch in
+    "x86_64")
+        echo "This is a 64-bit x86 system."
+        # 在这里执行针对x86_64架构的操作系统命令
+        KernelBitVer='amd64' ;;
+    "i386" | "i686")
+        echo "This is a 32-bit x86 system."
+        # 在这里执行针对32位x86架构的操作系统命令
+        KernelBitVer='386' ;;
+    "aarch64" | "arm64")
+        echo "This is a 64-bit ARM system."
+        # 在这里执行针对ARM64架构的操作系统命令
+        KernelBitVer='arm64'  ;;
+    *)
+esac
+
+[[ -z "$KernelBitVer" ]] && exit 1
+
+rm -rf  /usr/bin/rclone
+wget --no-check-certificate -O 'rclone.zip' "https://downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip"
+unzip rclone.zip
+chmod 755 ./rclone-*/rclone
+cp -raf ./rclone-*/rclone /usr/bin/
+rm -rf ./rclone-*
+rm -rf ./rclone.zip
+
 startTime=`date +%s`
 
 _os=`uname`
