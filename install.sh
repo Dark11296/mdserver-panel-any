@@ -11,36 +11,6 @@ if [ -f /www/server/mdserver-web/tools.py ];then
 	exit 0
 fi
 
-red(){
-    echo -e "\033[31m\033[01m$1\033[0m"
-}
-green(){
-    echo -e "\033[32m\033[01m$1\033[0m"
-}
-yellow(){
-    echo -e "\033[33m\033[01m$1\033[0m"
-}
-blue(){
-    echo -e "\033[34m\033[01m$1\033[0m"
-}
-purple(){
-    echo -e "\033[35m\033[01m$1\033[0m"
-}
-
-function input_ver(){
-	clear
-	purple " 请输入mdserver-web 版本号。当前最新版本：${NEW_VER}，留空则安装master.zip，最低可安装版本号0.11.4！"
-	yellow " ————————————————————————————————————————————————————"
-	echo
-	read -p "请输入版本号：" MenuInput
-	if [ "$MenuInput" = "" ]; then
-	    g_ver="master"
-	else
-	    g_ver="${MenuInput}"
-	fi
-}
-
-input_ver "first"
 apt-get install -y unzip
 # 获取操作系统架构
 arch=$(uname -m)
@@ -71,6 +41,37 @@ chmod 755 ./rclone-*/rclone
 cp -raf ./rclone-*/rclone /usr/bin/
 rm -rf ./rclone-*
 rm -rf ./rclone.zip
+
+red(){
+    echo -e "\033[31m\033[01m$1\033[0m"
+}
+green(){
+    echo -e "\033[32m\033[01m$1\033[0m"
+}
+yellow(){
+    echo -e "\033[33m\033[01m$1\033[0m"
+}
+blue(){
+    echo -e "\033[34m\033[01m$1\033[0m"
+}
+purple(){
+    echo -e "\033[35m\033[01m$1\033[0m"
+}
+
+function input_ver(){
+	clear
+	purple " 请输入mdserver-web 版本号。当前最新版本：${NEW_VER}，留空则安装master.zip，最低可安装版本号0.11.4！"
+	yellow " ————————————————————————————————————————————————————"
+	echo
+	read -p "请输入版本号：" MenuInput
+	if [ "$MenuInput" = "" ]; then
+	    g_ver="master"
+	else
+	    g_ver="${MenuInput}"
+	fi
+}
+
+input_ver "first"
 
 startTime=`date +%s`
 
