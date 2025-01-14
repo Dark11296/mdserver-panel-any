@@ -3,32 +3,8 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:/opt/hom
 export PATH
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
-
-if [ ! -f /usr/bin/rclone ];then
-	apt-get install -y unzip
-  	arch=$(uname -m)
-    	case $arch in
-     		"x86_64")
-       			echo "This is a 64-bit x86 system."
-    			KernelBitVer='amd64' ;;
-      		"i386" | "i686")
-			echo "This is a 32-bit x86 system."
-      			KernelBitVer='386' ;;
-	 	"aarch64" | "arm64")
-   			echo "This is a 64-bit ARM system."
-	 		KernelBitVer='arm64'  ;;
-    		*)
-	esac
- 	[[ -z "$KernelBitVer" ]] && exit 1
-  	wget --no-check-certificate -O 'rclone.zip' "https://downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip"
-   	unzip rclone.zip
-    	chmod 755 ./rclone-*/rclone
-     	cp -raf ./rclone-*/rclone /usr/bin/
-      	rm -rf ./rclone-*
-       	rm -rf ./rclone.zip    
-fi
-
 NEW_VER=$(curl -H "Accept: application/json" -Ha "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0" -s "https://api.github.com/repos/midoks/mdserver-web/releases/latest" --connect-timeout 10| grep 'tag_name' | cut -d\" -f4)
+
 if [ -f /www/server/mdserver-web/tools.py ];then
 	echo -e "存在旧版代码,不能安装!,已知风险的情况下" 
 	echo -e "rm -rf /www/server/mdserver-web"
@@ -116,6 +92,28 @@ if [ "$EUID" -ne 0 ] && [ "$OSNAME" != "macos" ];then
  	exit
 fi
 
+if [ ! -f /usr/bin/rclone ];then
+  	arch=$(uname -m)
+    	case $arch in
+     		"x86_64")
+       			echo "This is a 64-bit x86 system."
+    			KernelBitVer='amd64' ;;
+      		"i386" | "i686")
+			echo "This is a 32-bit x86 system."
+      			KernelBitVer='386' ;;
+	 	"aarch64" | "arm64")
+   			echo "This is a 64-bit ARM system."
+	 		KernelBitVer='arm64'  ;;
+    		*)
+	esac
+ 	[[ -z "$KernelBitVer" ]] && exit 1
+        curl --insecure -sSLo /tmp/rclone.zip ${HTTP_PREFIX}downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip
+	cd /tmp && unzip /tmp/rclone.zip
+   	chmod 755 /tmp/rclone-*/rclone
+	mv -f /tmp/rclone-*/rclone /usr/bin/
+ 	rm -rf /tmp/rclone-*
+  	rm -rf /tmp/rclone.zip
+fi
 
 # HTTP_PREFIX="https://"
 # LOCAL_ADDR=common
