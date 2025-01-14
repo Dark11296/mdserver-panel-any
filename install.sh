@@ -11,36 +11,34 @@ if [ -f /www/server/mdserver-web/tools.py ];then
 	exit 0
 fi
 
-apt-get install -y unzip
-# 获取操作系统架构
-arch=$(uname -m)
- 
-# 根据不同架构执行相应命令
-case $arch in
-    "x86_64")
-        echo "This is a 64-bit x86 system."
-        # 在这里执行针对x86_64架构的操作系统命令
-        KernelBitVer='amd64' ;;
-    "i386" | "i686")
-        echo "This is a 32-bit x86 system."
-        # 在这里执行针对32位x86架构的操作系统命令
-        KernelBitVer='386' ;;
-    "aarch64" | "arm64")
-        echo "This is a 64-bit ARM system."
-        # 在这里执行针对ARM64架构的操作系统命令
-        KernelBitVer='arm64'  ;;
-    *)
-esac
-
-[[ -z "$KernelBitVer" ]] && exit 1
-
-rm -rf  /usr/bin/rclone
-wget --no-check-certificate -O 'rclone.zip' "https://downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip"
-unzip rclone.zip
-chmod 755 ./rclone-*/rclone
-cp -raf ./rclone-*/rclone /usr/bin/
-rm -rf ./rclone-*
-rm -rf ./rclone.zip
+if [ ! -f /usr/bin/rclone ];then
+	apt-get install -y unzip
+ 	# 获取操作系统架构
+  	arch=$(uname -m)
+   	# 根据不同架构执行相应命令
+    	case $arch in
+     		"x86_64")
+       			echo "This is a 64-bit x86 system."
+	 		 # 在这里执行针对x86_64架构的操作系统命令
+    			KernelBitVer='amd64' ;;
+      		"i386" | "i686")
+			echo "This is a 32-bit x86 system."
+   			# 在这里执行针对32位x86架构的操作系统命令
+      			KernelBitVer='386' ;;
+	 	"aarch64" | "arm64")
+   			echo "This is a 64-bit ARM system."
+      			# 在这里执行针对ARM64架构的操作系统命令
+	 		KernelBitVer='arm64'  ;;
+    		*)
+      	esac
+       [[ -z "$KernelBitVer" ]] && exit 1
+       wget --no-check-certificate -O 'rclone.zip' "https://downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip"
+       unzip rclone.zip
+       chmod 755 ./rclone-*/rclone
+       cp -raf ./rclone-*/rclone /usr/bin/
+       rm -rf ./rclone-*
+       rm -rf ./rclone.zip
+fi
 
 red(){
     echo -e "\033[31m\033[01m$1\033[0m"
@@ -60,7 +58,7 @@ purple(){
 
 function input_ver(){
 	#clear
-	purple " 请输入mdserver-web 版本号。当前最新版本：${NEW_VER}，${KernelBitVer}留空则安装master.zip，最低可安装版本号0.11.4！"
+	purple " 请输入mdserver-web 版本号。当前最新版本：${NEW_VER}，留空则安装master.zip，最低可安装版本号0.11.4！"
 	yellow " ————————————————————————————————————————————————————"
 	echo
 	read -p "请输入版本号：" MenuInput
