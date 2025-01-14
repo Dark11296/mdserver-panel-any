@@ -3,13 +3,6 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:/opt/hom
 export PATH
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
-NEW_VER=$(curl -H "Accept: application/json" -Ha "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0" -s "https://api.github.com/repos/midoks/mdserver-web/releases/latest" --connect-timeout 10| grep 'tag_name' | cut -d\" -f4)
-if [ -f /www/server/mdserver-web/tools.py ];then
-	echo -e "存在旧版代码,不能安装!,已知风险的情况下" 
-	echo -e "rm -rf /www/server/mdserver-web"
-	echo -e "可安装!" 
-	exit 0
-fi
 
 if [ ! -f /usr/bin/rclone ];then
 	apt-get install -y unzip
@@ -33,6 +26,14 @@ if [ ! -f /usr/bin/rclone ];then
      	cp -raf ./rclone-*/rclone /usr/bin/
       	rm -rf ./rclone-*
        	rm -rf ./rclone.zip    
+fi
+
+NEW_VER=$(curl -H "Accept: application/json" -Ha "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0" -s "https://api.github.com/repos/midoks/mdserver-web/releases/latest" --connect-timeout 10| grep 'tag_name' | cut -d\" -f4)
+if [ -f /www/server/mdserver-web/tools.py ];then
+	echo -e "存在旧版代码,不能安装!,已知风险的情况下" 
+	echo -e "rm -rf /www/server/mdserver-web"
+	echo -e "可安装!" 
+	exit 0
 fi
 
 red(){
