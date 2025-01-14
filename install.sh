@@ -57,7 +57,7 @@ purple(){
 }
 
 function input_ver(){
-	#clear
+	clear
 	purple " 请输入mdserver-web 版本号。当前最新版本：${NEW_VER}，留空则安装master.zip，最低可安装版本号0.11.4！"
 	yellow " ————————————————————————————————————————————————————"
 	echo
