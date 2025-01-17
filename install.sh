@@ -39,17 +39,6 @@ function input_ver() {
 	else
 		g_ver="${MenuInput}"
 	fi
-
-	clear
-	purple " 请输入rclone 配置解压密码"
-	yellow " ————————————————————————————————————————————————————"
-	echo
-	read -p "请输入版本号：" MenuInput
-	if [ "$MenuInput" = "" ]; then
-		exit
-	else
-		rclone_password="${MenuInput}"
-	fi
 }
 
 input_ver "first"
@@ -122,20 +111,11 @@ if [ ! -f /usr/bin/rclone ]; then
 	esac
 	[[ -z "$KernelBitVer" ]] && exit 1
 	curl --insecure -sSLo /tmp/rclone.zip ${HTTP_PREFIX}downloads.rclone.org/rclone-current-linux-$KernelBitVer.zip
-	curl --insecure -sSLo /tmp/config.zip ${HTTP_PREFIX}raw.githubusercontent.com/Dark11296/mdserver-panel-any/master/config.zip
 	cd /tmp && unzip /tmp/rclone.zip
-	unzip -p ${rclone_password} /tmp/config.zip
-
-	mkdir -p -m 755 /root/.config/rclone
-	mv -f /tmp/config/rclone.conf /root/.config/rclone/
-	chmod 600 /root/.config/rclone/rclone.conf
-
 	chmod 755 /tmp/rclone-*/rclone
 	mv -f /tmp/rclone-*/rclone /usr/bin/
 	rm -rf /tmp/rclone-*
 	rm -rf /tmp/rclone.zip
-	rm -rf /tmp/config
-	rm -rf /tmp/config.zip
 fi
 
 # HTTP_PREFIX="https://"
