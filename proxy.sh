@@ -3,8 +3,8 @@
 # 定义要修改的文件夹路径
 folder_path="/www/server/web_conf/nginx/proxy"
 
-old_text="209.141.33.31"
-new_text="47.79.89.238"
+old_text="47.79.89.238"
+new_text="209.141.33.31"
 
 # 遍历文件夹内的所有文本文件
 find "$folder_path" -type f -name "*.*" | while read file; do
