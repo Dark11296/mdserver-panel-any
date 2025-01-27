@@ -7,5 +7,5 @@ find "$folder_path" -type f -name "*.*" | while read file; do
     sed -i "s/$old_text/$new_text/g" "$file"
   fi
 done
-
+systemctl reload openresty
 echo "ok"
